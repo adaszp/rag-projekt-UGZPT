@@ -1,0 +1,16 @@
+services:
+  qdrant_db_ugzpt:
+    image: qdrant/qdrant:latest
+    container_name: qdrant_db_ugzpt
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      QDRANT__LOG_LEVEL: info
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  qdrant_data:
