@@ -63,7 +63,7 @@ def process_articles(qdrant_manager_instance: QdrantManager):
 
     add_base_articles_to_qdrant(qdrant_manager_instance=qdrant_manager_instance, documents=processed_articles)
     add_page_chunked_articles_to_qdrant(qdrant_manager_instance=qdrant_manager_instance, documents=processed_pages)
-    # add_sentence_chunked_articles_to_qdrant(qdrant_manager_instance=qdrant_manager_instance, documents=processed_pages)
+    add_sentence_chunked_articles_to_qdrant(qdrant_manager_instance=qdrant_manager_instance, documents=processed_pages)
 
 
 def read_articles():

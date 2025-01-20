@@ -1,2 +1,8 @@
 qdrant_client
 sentence_transformers
+
+nltk~=3.9.1
+spacy~=3.8.4
+qdrant-client~=1.13.0
+sentence-transformers~=3.3.1
+langchain~=0.3.14
