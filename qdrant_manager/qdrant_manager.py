@@ -8,9 +8,9 @@ from readers import Document
 
 
 class QdrantManager:
-    def __init__(self, host: str, port: int, model_name: str, cache_folder: str = './model_cache'):
+    def __init__(self, host: str, port: int, sentence_transformer_model: SentenceTransformer):
         self.client = QdrantClient(host=host, port=port)
-        self.model = SentenceTransformer(model_name, cache_folder=cache_folder)
+        self.model = sentence_transformer_model
         self.threshold = 0.5
 
     def get_client_collections(self):
