@@ -1,6 +1,8 @@
 import json
 
-from constants import CONTAINER_URL, CONTAINER_PORT, MODEL_NAME, BASE_COLLECTION_NAME
+from sentence_transformers import SentenceTransformer
+
+from constants import CONTAINER_URL, CONTAINER_PORT, MODEL_NAME_ALL_MINILM, BASE_COLLECTION_NAME
 from generation import ResponseGenerator
 from qdrant_manager import QdrantManager
 from qdrant_retrieval import QdrantRetriever
@@ -19,7 +21,8 @@ def qdrant_search_loop(qdrant_manager_instance: QdrantManager, collection_name: 
 
 
 if __name__ == "__main__":
-    qdrant_manager = QdrantManager(CONTAINER_URL, CONTAINER_PORT, MODEL_NAME)
+    sentence_transformer_model = SentenceTransformer(MODEL_NAME_ALL_MINILM)
+    qdrant_manager = QdrantManager(CONTAINER_URL, CONTAINER_PORT, sentence_transformer_model)
     generator = ResponseGenerator('llama3.2:3b-instruct-fp16')
 
     # process_course_slides(qdrant_manager_instance=qdrant_manager)
