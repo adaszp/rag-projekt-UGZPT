@@ -247,4 +247,6 @@ if __name__ == '__main__':
     qdrant_manager = QdrantManager(CONTAINER_URL, CONTAINER_PORT, embedding_model)
 
     process_articles(qdrant_manager_instance=qdrant_manager, vector_size=embedding_model_vector_size)
+    
+    distance_experiment(qdrant_manager)
 
