@@ -13,5 +13,3 @@ METRIC_DOT = "Dot"
 METRIC_COSINE = "Cosine"
 METRIC_EUCLID = "Euclid"
 METRIC_MANHATTAN = "Manhattan"
-
-MODEL_NAME = 'sentence-transformers/all-MiniLM-L6-v2'
