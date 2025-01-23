@@ -2,11 +2,13 @@ import os
 
 from langchain_ollama import ChatOllama
 import time
+import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from constants import MODEL_NAME_ALL_MINILM, CONTAINER_URL, CONTAINER_PORT
 from qdrant_manager import QdrantManager
 from qdrant_retrieval import QdrantRetriever
+from questions import  test_question
 
 
 class ResponseGenerator:
@@ -49,26 +51,30 @@ def generating_model_test():
     with open(output_file, "w") as f:
         for model in models:
             for temp in temperatures:
-                generator = ResponseGenerator(model_name=model, temperature=temp)
+                responses_time = []
+                for question in  test_question:
+                    generator = ResponseGenerator(model_name=model, temperature=temp)
 
-                try:
-                    start_time = time.time()
-                    response = generator.generate_response(documents_retrieved, query)
-                    response_time = time.time() - start_time
-                    f.write(f"Model: {model}, Temperature: {temp}\n")
-                    f.write(f"Response Time: {response_time:.2f} seconds\n")
-                    f.write(f"Question: {query}\n")
-                    f.write(f"Response: {response}\n")
-                    f.write("\n")
-                    f.write("=" * 80 + "\n")
+                    try:
+                        start_time = time.time()
+                        response = generator.generate_response(documents_retrieved, question)
+                        response_time = time.time() - start_time
+                        responses_time.append(response_time)
+                        f.write(f"Model: {model}, Temperature: {temp}\n")
+                        f.write(f"Response Time: {response_time:.2f} seconds\n")
+                        f.write(f"Question: {question}\n")
+                        f.write(f"Response: {response}\n")
 
-                    print(f"Model: {model}, Temp: {temp}, Time: {response_time:.2f}s Response: {response.content}")
-                except Exception as e:
-                    f.write(f"Model: {model}, Temperature: {temp} - Error: {str(e)}\n")
-                    f.write("=" * 80 + "\n")
-                    print(f"Error testing model {model} at temperature {temp}: {e}")
 
-    print(f"Testy zakończone. Wyniki zapisano w pliku: {output_file}")
+                        print(f"Model: {model}, Temp: {temp}, Time: {response_time:.2f}s Response: {response.content}")
+                    except Exception as e:
+                        f.write(f"Model: {model}, Temperature: {temp} - Error: {str(e)}\n")
+                        f.write("=" * 80 + "\n")
+                        print(f"Error testing model {model} at temperature {temp}: {e}")
+                f.write(f"Model: {model}, Temp: {temp} - Median_time: {np.median(responses_time):.2f}s Mean time: {np.mean(responses_time)}\n")
+                f.write("\n")
+                f.write("=" * 80 + "\n")
+        print(f"Testy zakończone. Wyniki zapisano w pliku: {output_file}")
 
 
 if __name__ == "__main__":
