@@ -101,3 +101,11 @@ ai_questions = [
     "How does AI optimize supply chains?",
     "Can AI predict human behavior?"
 ]
+
+test_question = [
+    "What are the main types of AI?",
+    "Can AI predict human behavior?",
+    "What is accuracy in machine learning?",
+    "How does AI translate languages?",
+    "What is edge AI?",
+]
