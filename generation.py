@@ -18,7 +18,8 @@ class ResponseGenerator:
         self.validatorLlm = ChatOllama(model=model_name, temperature=temperature)
 
     def generate_response(self, context, question):
-        prompt = f"""You are an IT specialist. Use the context below to answer the question concisely.
+        prompt = f"""You are an assistant. Use the context below to answer the question concisely.
+                    If unsure, say "I don’t know based on the given information."
 
                Context:
                {context}
@@ -27,9 +28,7 @@ class ResponseGenerator:
                {question}
 
                Answer:"""
-        # print(prompt)
         return self.llm.invoke([prompt])
-    
     def second_time_generate_response(self, extra_response,):
         extra = ""
         if extra_response:
@@ -61,10 +60,8 @@ class ResponseGenerator:
                - valid - boolean
                - suggestion - how to improve answer and what is wrong in the answer
                """
-        # print(prompt)
+        print(prompt)
         return self.validatorLlm.invoke([prompt])
-    
-        
 
 
 def generating_model_test():

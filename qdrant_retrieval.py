@@ -10,16 +10,20 @@ class QdrantRetriever:
 
     def get_relevant_documents(self, query:str):
 
-        results = self.qdrant_manager.search(self.collection_name, query,top_k=self.top_k)
+        # results = self.qdrant_manager.search(self.collection_name, query,top_k=self.top_k)
+        results = self.qdrant_manager.auto_merging_retriever(self.collection_name, 'articles_cosine',query,top_k=self.top_k)
+        
+        # print(results)
 
         documents = []
 
         for result in results:
+            # print(result)
             document = Document(
                 page_content=result.payload['content'],
                 metadata={
                     "document_id": result.id,
-                    "score": result.score,
+                    # "score": result.score,
                     "source": result.payload.get("source", "unknown"),
                     "type": result.payload.get("type", "unknown"),
                     "last_modified": result.payload.get("last_modified", "unknown"),
