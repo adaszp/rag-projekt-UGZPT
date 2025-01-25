@@ -46,42 +46,14 @@ if __name__ == "__main__":
     
     validator = json.loads(strValidator.content)
     print(validator)
-    isValid = validator["valid"]
-    print(isValid)
+    valid = validator["valid"]
+    print(valid)
     
-    index = 0
-        
-    while not isValid and index < 4 :
-        try:
-            answer = generator.second_time_generate_response(validator["suggestion"])
-            # print(answer)
-            strValidator = generator.validate_response(retrieved_docs, query, answer.content)
-            print('\n')
-            print('----------')
-            print(answer)
-            print('\n')
-            print(strValidator.content)
-            print('----------')
-            print('\n')
-        
-            validator = json.loads(strValidator.content)
-            isValid = validator["valid"]
-            index = index + 1
-            # print('test '+ str(index))
-            # print('\n')
-            # print('\n')
-        except :
-            # print(answer)
-            # print('\n')
-            # print(strValidator.content)
-            print('\n')
-            print('fail')
-            index = index + 1
+    print('First')    
+    print(answer.content)
     
-    print('final answer')
-    print(answer)
-            
+    if not valid:
+        answer = generator.second_time_generate_response(validator["suggestion"])
     
-    # print('-------------------')
-    # print('index '+ str(index))
-    # print(validator.content)
+    print('Final')    
+    print(answer.content)
