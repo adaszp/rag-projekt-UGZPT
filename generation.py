@@ -18,7 +18,8 @@ class ResponseGenerator:
         self.validatorLlm = ChatOllama(model=model_name, temperature=temperature)
 
     def generate_response(self, context, question):
-        prompt = f"""You are an IT specialist. Use the context below to answer the question concisely.
+        prompt = f"""You are an assistant. Use the context below to answer the question concisely.
+                    If unsure, say "I don’t know based on the given information."
 
                Context:
                {context}
@@ -46,18 +47,19 @@ class ResponseGenerator:
         return self.llm.invoke([prompt])
     
     def validate_response(self, context, question, answer):
+        #   Context:
+        #        {context}
+        # Is the answer is correct base on the context ?
         prompt = f"""
-                Is the answer is correct base on the context ?
-               Context:
-               {context}
-
+               Does the answer correct answer the question ?
+             
                Question:
                {question}
 
                Answer:
                {answer}
                -----
-               the answer should be only json with two fields:
+               json should be answer with:
                - valid - boolean
                - suggestion - how to improve answer and what is wrong in the answer
                """

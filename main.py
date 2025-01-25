@@ -26,13 +26,21 @@ def question_loop(retriever: QdrantRetriever, generator: ResponseGenerator):
             break
         retrieved_docs = retriever.get_relevant_documents(user_query)
         answer = generator.generate_response(retrieved_docs, user_query)
-        strValidator = generator.validate_response(retrieved_docs, user_query, answer.content)
-        validator = json.loads(strValidator.content)
-        valid = validator["valid"]
-
-        if not valid:
-            answer = generator.second_time_generate_response(validator["suggestion"])
-    
+        # print("FIRST")
+        # print(answer.content)
+        
+        
+        # strValidator = generator.validate_response(retrieved_docs, user_query, answer.content)
+        # print("VALIDATION")
+        # print(strValidator)
+        
+        # validator = json.loads(strValidator.content)
+        # valid = validator["valid"]
+        
+        # if not valid:
+        #     answer = generator.second_time_generate_response(validator["suggestion"])
+        
+        # print("FINAL")
         print(answer.content)
 
 

@@ -118,9 +118,9 @@ class QdrantManager:
 
         sorted_records = sorted(parents_map.items(), key=lambda item: item[1]['sum_score'], reverse=True)
 
-        print("SORTED RECORDS:")
-        for record in sorted_records:
-            print(f'record:\nscore: {record[1]["sum_score"]}\ndocument: {record[1]["document"]}\n')
+        # print("SORTED RECORDS:")
+        # for record in sorted_records:
+        #     print(f'record:\nscore: {record[1]["sum_score"]}\ndocument: {record[1]["document"]}\n')
 
         return [record[1]["document"] for record in sorted_records]
 
