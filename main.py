@@ -35,5 +35,53 @@ if __name__ == "__main__":
     retriever = QdrantRetriever(qdrant_manager, 'article_pages_cosine')
     query = "What is artificial intelligence?"
     retrieved_docs = retriever.get_relevant_documents(query)
+    # retrieved_docs = retriever.get_relevant_chunks(query)
+        
     answer = generator.generate_response(retrieved_docs,query)
     print(answer.content)
+    
+    strValidator = generator.validate_response(retrieved_docs, query, answer.content)
+    print('\n')
+    print(strValidator.content)
+    
+    validator = json.loads(strValidator.content)
+    print(validator)
+    isValid = validator["valid"]
+    print(isValid)
+    
+    index = 0
+        
+    while not isValid and index < 4 :
+        try:
+            answer = generator.second_time_generate_response(validator["suggestion"])
+            # print(answer)
+            strValidator = generator.validate_response(retrieved_docs, query, answer.content)
+            print('\n')
+            print('----------')
+            print(answer)
+            print('\n')
+            print(strValidator.content)
+            print('----------')
+            print('\n')
+        
+            validator = json.loads(strValidator.content)
+            isValid = validator["valid"]
+            index = index + 1
+            # print('test '+ str(index))
+            # print('\n')
+            # print('\n')
+        except :
+            # print(answer)
+            # print('\n')
+            # print(strValidator.content)
+            print('\n')
+            print('fail')
+            index = index + 1
+    
+    print('final answer')
+    print(answer)
+            
+    
+    # print('-------------------')
+    # print('index '+ str(index))
+    # print(validator.content)

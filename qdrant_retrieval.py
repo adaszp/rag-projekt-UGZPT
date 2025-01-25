@@ -28,3 +28,17 @@ class QdrantRetriever:
             documents.append(document)
 
         return documents
+    
+    def get_relevant_chunks(self, query:str):
+
+        results = self.qdrant_manager.search(self.collection_name, query,top_k=self.top_k)
+
+        documents = []
+
+        for result in results:
+            documents.append({
+              "content": result.payload['content'],
+              "score": result.score,
+            })
+
+        return documents
