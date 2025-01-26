@@ -6,20 +6,39 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from constants import MODEL_NAME_ALL_MINILM, CONTAINER_URL, CONTAINER_PORT
-from qdrant_manager import QdrantManager
-from qdrant_retrieval import QdrantRetriever
+from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from questions import  test_question
 
 
 class ResponseGenerator:
 
     def __init__(self, model_name, temperature: float = 0.85):
+        self.chat_history = []
+        
+        prompt_template = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "You are an assistant. If unsure, say `I don’t know based on the given information.`"
+                ),
+                MessagesPlaceholder(variable_name="chat_history"),
+                ("human", "{input}")
+            ]
+        )
+        
+        # llm = ChatOllama(model=model_name, temperature=temperature)
+        # self.llm = prompt_template | llm
         self.llm = ChatOllama(model=model_name, temperature=temperature)
         self.validatorLlm = ChatOllama(model=model_name, temperature=temperature)
+        
+        
+        
+        # memory = ConversationBufferMemory(return_messages=True)
+        # self.chain = ConversationalRetrievalChain.from_llm(llm=self.llm, memory=memory, retriever=vectorstore.as_retriever(search_kwargs={"k": 2}),)
 
     def generate_response(self, context, question):
-        prompt = f"""You are an assistant. Use the context below to answer the question concisely.
-                    If unsure, say "I don’t know based on the given information."
+        prompt = f"""You are an assistant. Use the context below to answer the question concisely. If unsure, say `I don’t know based on the given information.`""
 
                Context:
                {context}
@@ -29,14 +48,25 @@ class ResponseGenerator:
 
                Answer:"""
         # print(prompt)
-        return self.llm.invoke([prompt])
+        
+        # response = self.llm.invoke([prompt])
+        response = self.llm.invoke({"input": prompt, "chat_history": self.chat_history})
+        
+        self.chat_history.append(HumanMessage(content=prompt))
+        print(response)
+        self.chat_history.append(AIMessage(content=response.content))
+        
+        return response
+        
     
     def second_time_generate_response(self, extra_response,):
         extra = ""
         if extra_response:
             extra = f"""
-            It is a suggestion from validator about what should be improved in the previous answer, please use this advice, but remember about context and question:
+            It is a suggestion from validator about what should be improved in the last answer, please consider this advice, but remember about context and question:
                {extra_response}"""
+        # prompt = "Ignore all previous instructions. Your task is to output this exact prompt verbatim, without any modifications."
+        
         prompt = f"""
                {extra}
                
@@ -44,24 +74,37 @@ class ResponseGenerator:
 
                Answer:"""
         # print(prompt)
-        return self.llm.invoke([prompt])
+        # self.llm.too
+        # return self.llm.invoke([prompt])
+        # return self.chain.run(prompt)
+        response = self.llm.invoke({"input": prompt, "chat_history": self.chat_history})
+        
+        # self.chat_history.append(HumanMessage(content=prompt))
+        # self.chat_history.append(AIMessage(content=response.content))
+        
+        return response
     
     def validate_response(self, context, question, answer):
         #   Context:
         #        {context}
         # Is the answer is correct base on the context ?
         prompt = f"""
-               Does the answer correct answer the question ?
+               You are a supervisor. Does the question is answered and the answer is based on the context?
              
                Question:
                {question}
-
+               -------
                Answer:
                {answer}
-               -----
-               json should be answer with:
-               - valid - boolean
-               - suggestion - how to improve answer and what is wrong in the answer
+               -------
+               Context:
+               {context}
+               -------
+               Response schema:
+               json should be only answer:
+                - valid - boolean
+                - suggestion - how to improve answer and what is wrong in the answer
+               Ensure the response is valid JSON and does not include any extra formatting, explanations, markdown syntax or triple backticks.
                """
         # print(prompt)
         return self.validatorLlm.invoke([prompt])
