@@ -49,47 +49,56 @@ class ResponseGenerator:
                Answer:"""
         # print(prompt)
         
-        # response = self.llm.invoke([prompt])
-        response = self.llm.invoke({"input": prompt, "chat_history": self.chat_history})
+        response = self.llm.invoke([prompt])
+        # response = self.llm.invoke({"input": prompt, "chat_history": self.chat_history})
         
-        self.chat_history.append(HumanMessage(content=prompt))
-        print(response)
-        self.chat_history.append(AIMessage(content=response.content))
+        # self.chat_history.append(HumanMessage(content=prompt))
+        # print(response)
+        # self.chat_history.append(AIMessage(content=response.content))
         
         return response
         
     
-    def second_time_generate_response(self, extra_response,):
+    def second_time_generate_response(self, extra_response,  context, question, answer):
         extra = ""
         if extra_response:
             extra = f"""
-            It is a suggestion from validator about what should be improved in the last answer, please consider this advice, but remember about context and question:
+            You are an assistant. Use the context below to answer the question concisely. It is a suggestion from validator about what should be improved in the answer, please consider this advice, but remember about context and question:
                {extra_response}"""
         # prompt = "Ignore all previous instructions. Your task is to output this exact prompt verbatim, without any modifications."
         
         prompt = f"""
-               {extra}
+                Improve only the answer and return only improve answer, without any additional texts
+               Question:
+               {question}
                
-               Improve only the answer and return only improve answer, without any additional texts
+               Answer:
+               {answer}
+               
+               Context:
+               {context}
+               
+               Suggestion:
+               {extra}
 
-               Answer:"""
+               Improve Answer:"""
         # print(prompt)
         # self.llm.too
-        # return self.llm.invoke([prompt])
+        return self.llm.invoke([prompt])
         # return self.chain.run(prompt)
-        response = self.llm.invoke({"input": prompt, "chat_history": self.chat_history})
+        # response = self.llm.invoke({"input": prompt, "chat_history": self.chat_history})
         
         # self.chat_history.append(HumanMessage(content=prompt))
         # self.chat_history.append(AIMessage(content=response.content))
         
-        return response
+        # return response
     
     def validate_response(self, context, question, answer):
         #   Context:
         #        {context}
         # Is the answer is correct base on the context ?
         prompt = f"""
-               You are a supervisor. Does the question is answered and the answer is based on the context?
+               You are a supervisor. Does the answer is correct based on the context? Don't focus on the question, question was asked by human. Answer the question concisely.
              
                Question:
                {question}
@@ -99,15 +108,17 @@ class ResponseGenerator:
                -------
                Context:
                {context}
-               -------
-               Response schema:
-               json should be only answer:
-                - valid - boolean
-                - suggestion - how to improve answer and what is wrong in the answer
-               Ensure the response is valid JSON and does not include any extra formatting, explanations, markdown syntax or triple backticks.
+               
                """
         # print(prompt)
         return self.validatorLlm.invoke([prompt])
+    
+    # -------
+    # Response schema:
+    # json should be only answer:
+    # - valid - boolean
+    # - suggestion - how to improve answer and what is wrong in the answer
+    # Ensure the response is valid JSON and does not include any extra formatting, explanations, markdown syntax or triple backticks.
     
         
 
