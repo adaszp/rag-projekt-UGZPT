@@ -26,21 +26,19 @@ def question_loop(retriever: QdrantRetriever, generator: ResponseGenerator):
             break
         retrieved_docs = retriever.get_relevant_documents(user_query)
         answer = generator.generate_response(retrieved_docs, user_query)
-        # print("FIRST")
-        # print(answer.content)
         
+        try :
+            
+            strValidator = generator.validate_response(retrieved_docs, user_query, answer.content)
+
+            answer = generator.generate_response(retrieved_docs, f"""
+                                                 this is feedback from validation assistant: {strValidator.content}, 
+                                                 please consider the suggestion from him and return final answer on the question""")
         
-        # strValidator = generator.validate_response(retrieved_docs, user_query, answer.content)
-        # print("VALIDATION")
-        # print(strValidator)
-        
-        # validator = json.loads(strValidator.content)
-        # valid = validator["valid"]
-        
-        # if not valid:
-        #     answer = generator.second_time_generate_response(validator["suggestion"])
-        
-        # print("FINAL")
+        except :
+            print('error')
+                
+        print("\nANSWER")
         print(answer.content)
 
 
@@ -49,37 +47,5 @@ if __name__ == "__main__":
     qdrant_manager = QdrantManager(CONTAINER_URL, CONTAINER_PORT, embedding_model)
     generator = ResponseGenerator('llama3.2:3b-instruct-fp16')
     retriever = QdrantRetriever(qdrant_manager, 'article_pages_cosine')
-    # process_course_slides(qdrant_manager_instance=qdrant_manager)
-
-    # this will take 2 hours to create a full collection in qdrant
-    # process_word_paradigm_dictionary(qdrant_manager_instance=qdrant_manager)
-
-    # qdrant_search_loop(qdrant_manager)
-
-    # retriever = QdrantRetriever(qdrant_manager, 'article_pages_cosine')
-    # query = "What is artificial intelligence?"
-    # retrieved_docs = retriever.get_relevant_documents(query)
-    # # retrieved_docs = retriever.get_relevant_chunks(query)
-        
-    # answer = generator.generate_response(retrieved_docs,query)
-    # print(answer.content)
-    
-    # strValidator = generator.validate_response(retrieved_docs, query, answer.content)
-    # print('\n')
-    # print(strValidator.content)
-    
-    # validator = json.loads(strValidator.content)
-    # print(validator)
-    # valid = validator["valid"]
-    # print(valid)
-    
-    # print('First')    
-    # print(answer.content)
-    
-    # if not valid:
-    #     answer = generator.second_time_generate_response(validator["suggestion"])
-    
-    # print('Final')    
-    # print(answer.content)
     
     question_loop(retriever, generator)

@@ -3,7 +3,7 @@ from qdrant_manager import QdrantManager
 
 
 class QdrantRetriever:
-    def __init__(self, qdrant_manager:QdrantManager, collection_name:str, top_k:int=5):
+    def __init__(self, qdrant_manager:QdrantManager, collection_name:str, top_k:int=1):
         self.qdrant_manager = qdrant_manager
         self.collection_name = collection_name
         self.top_k = top_k
