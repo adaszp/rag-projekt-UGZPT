@@ -26,30 +26,19 @@ def question_loop(retriever: QdrantRetriever, generator: ResponseGenerator):
             break
         retrieved_docs = retriever.get_relevant_documents(user_query)
         answer = generator.generate_response(retrieved_docs, user_query)
-        # print("FIRST")
-        print(answer)
-        # print(answer.content)
         
         try :
             
             strValidator = generator.validate_response(retrieved_docs, user_query, answer.content)
-            print("VALIDATION")
-            print(strValidator)
-            
-        #     # validator = json.loads(strValidator.content)
-        #     # valid = validator["valid"]
-            
-        #     # if not valid:
-        #     answer = generator.second_time_generate_response(strValidator.content, retrieved_docs, user_query, answer.content)
-        # answer = generator.second_time_generate_response("")
+
             answer = generator.generate_response(retrieved_docs, f"""
                                                  this is feedback from validation assistant: {strValidator.content}, 
                                                  please consider the suggestion from him and return final answer on the question""")
         
         except :
             print('error')
-        
-        print("FINAL")
+                
+        print("\nANSWER")
         print(answer.content)
 
 
